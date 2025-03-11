@@ -1,8 +1,8 @@
 using System.Security.Cryptography;
 using csharp_api.Data;
 using csharp_api.Models.Entities;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,9 +13,13 @@ namespace csharp_api.Controllers
     public class UserAccountController : ControllerBase
     {
         private readonly AppDbContext _dbContext;
+        private readonly PasswordHasher<UserAccount> _passwordHasher;
 
-        public UserAccountController(AppDbContext dbContext) =>
+        public UserAccountController(AppDbContext dbContext)
+        {
             _dbContext = dbContext;
+            _passwordHasher = new PasswordHasher<UserAccount>();
+        }
 
         [HttpGet]
         public async Task<List<UserAccount>> Get()
@@ -38,13 +42,7 @@ namespace csharp_api.Controllers
                 return BadRequest("Invalid Request");
             }
 
-            byte[] salt = RandomNumberGenerator.GetBytes(128 / 8);
-            userAccount.Password = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                password: userAccount.Password!,
-                salt: salt,
-                prf: KeyDerivationPrf.HMACSHA256,
-                iterationCount: 100000,
-                numBytesRequested: 256 / 8));
+            userAccount.Password = _passwordHasher.HashPassword(userAccount, userAccount.Password);
 
             await _dbContext.UserAccounts.AddAsync(userAccount);
             await _dbContext.SaveChangesAsync();

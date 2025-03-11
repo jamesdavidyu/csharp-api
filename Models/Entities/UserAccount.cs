@@ -14,5 +14,5 @@ public class UserAccount
     [Column("username")]
     public required string UserName { get; set; }
     [Column("password")]
-    public required string Password { get; set; }
+    public string Password { get; set; }
 }
