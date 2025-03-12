@@ -1,4 +1,3 @@
-using System;
 using csharp_api.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 

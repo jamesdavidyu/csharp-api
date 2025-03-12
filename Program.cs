@@ -1,5 +1,6 @@
 using System.Text;
 using csharp_api.Data;
+using csharp_api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -34,6 +35,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 builder.Services.AddAuthorization();
+builder.Services.AddScoped<JwtService>();
 
 var app = builder.Build();
 

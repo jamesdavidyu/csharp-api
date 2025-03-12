@@ -1,7 +1,6 @@
-using System.Security.Cryptography;
 using csharp_api.Data;
 using csharp_api.Models.Entities;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +9,7 @@ namespace csharp_api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UserAccountController : ControllerBase
     {
         private readonly AppDbContext _dbContext;
