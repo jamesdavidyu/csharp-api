@@ -25,7 +25,7 @@ public class JwtService
         _passwordHasher = new PasswordHasher<UserAccount>();
     }
 
-    public async Task<LoginResponseModel> Authenticate(LoginRequestModel request)
+    public async Task<LoginResponseModel?> Authenticate(LoginRequestModel request)
     {
         if (string.IsNullOrWhiteSpace(request.UserName) ||
             string.IsNullOrWhiteSpace(request.Password))
@@ -38,8 +38,11 @@ public class JwtService
         var issuer = _configuration["Issuer"];
         var audience = _configuration["Audience"];
         var key = _configuration["Key"];
-        var tokenValidityMins = _configuration["TokenValidityMins"];
-        var tokenExpiryTimeStamp = DateTime.UtcNow.AddMinutes(Int32.Parse(tokenValidityMins));
+        int tokenValidityMins;
+        if (!int.TryParse(_configuration["TokenValidityMins"], out tokenValidityMins)) {
+            tokenValidityMins = 60;
+        }
+        var tokenExpiryTimeStamp = DateTime.UtcNow.AddMinutes(tokenValidityMins);
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {
@@ -50,7 +53,7 @@ public class JwtService
             Expires = tokenExpiryTimeStamp,
             Issuer = issuer,
             Audience = audience,
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)),
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key ?? "")),
                 SecurityAlgorithms.HmacSha512Signature),
         };
 

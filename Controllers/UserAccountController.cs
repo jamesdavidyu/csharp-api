@@ -27,7 +27,7 @@ namespace csharp_api.Controllers
             return await _dbContext.UserAccounts.ToListAsync();
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<UserAccount?> GetById(Guid id)
         {
             return await _dbContext.UserAccounts.FirstOrDefaultAsync(x => x.Id == id);
